@@ -9,7 +9,7 @@ import (
 
 type Storage interface {
 	CreateAccount(*Account) error
-	DeleteAccount(int) error
+	DeleteAccountByID(int) error
 	UpdateAccount(*Account) error
 	GetAccountByID(int) (*Account, error)
 	GetAccounts() ([]*Account, error)
@@ -75,7 +75,15 @@ func (s *PostgresStore) CreateAccount(acc *Account) error {
 	return nil
 }
 
-func (s *PostgresStore) DeleteAccount(int) error {
+func (s *PostgresStore) DeleteAccountByID(id int) error {
+	query := `DELETE FROM ACCOUNT WHERE ID = $1`
+	r, err := s.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	if rf, _ := r.RowsAffected(); rf == 0 {
+		return fmt.Errorf("id: %d not found to delete", id)
+	}
 	return nil
 }
 

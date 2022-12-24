@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -37,7 +38,15 @@ func (s *APIServer) handleGetAccounts(w http.ResponseWriter, r *http.Request) er
 }
 
 func (s *APIServer) handleGetAccountByID(w http.ResponseWriter, r *http.Request) error {
-	account := NewAccount("Emanuel", "Perez")
+	idStr := mux.Vars(r)["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return err
+	}
+	account, err := s.store.GetAccountByID(id)
+	if err != nil {
+		return err
+	}
 	return WriteJSON(w, http.StatusOK, account)
 }
 
@@ -46,6 +55,7 @@ func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) 
 	if err := json.NewDecoder(r.Body).Decode(createAccountRequest); err != nil {
 		return err
 	}
+	defer r.Body.Close()
 	account := NewAccount(createAccountRequest.FirstName, createAccountRequest.LastName)
 	if err := s.store.CreateAccount(account); err != nil {
 		return err

@@ -1,12 +1,18 @@
 package main
 
 import (
+	"math/rand"
 	"time"
 )
 
 type TransferRequest struct {
 	ToAccount int `json:"toAccount"`
 	Ammount   int `json:"ammount"`
+}
+
+type CreateAccountRequest struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 type Account struct {
@@ -19,16 +25,12 @@ type Account struct {
 }
 
 func NewAccount(firstName, lastName string) *Account {
+
 	return &Account{
 		FirstName: firstName,
 		LastName:  lastName,
-		Number:    1,
+		Number:    int64(rand.Int()),
 		Balance:   0,
 		CreatedAt: time.Now().UTC(),
 	}
-}
-
-type CreateAccountRequest struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
 }

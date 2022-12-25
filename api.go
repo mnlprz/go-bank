@@ -56,7 +56,6 @@ func (s *APIServer) handleAccountByID(w http.ResponseWriter, r *http.Request) er
 		}
 		return WriteJSON(w, http.StatusOK, id)
 	}
-
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 

@@ -21,6 +21,7 @@ func (s *APIServer) Run() {
 func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error {
 
 	switch r.Method {
+
 	case "GET":
 		return s.handleGetAccounts(w, r)
 
@@ -51,6 +52,7 @@ func (s *APIServer) handleAccountByID(w http.ResponseWriter, r *http.Request) er
 	}
 
 	switch r.Method {
+
 	case "GET":
 		account, err := s.store.GetAccountByID(id)
 		if err != nil {

@@ -29,9 +29,10 @@ func (s *APIServer) handleGetAccounts(w http.ResponseWriter, r *http.Request) {
 
 	accounts, err := s.store.GetAccounts()
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
-	WriteJSON(w, http.StatusOK, accounts)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(accounts)
 }
 
 func (s *APIServer) handleGetAccountsByID(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +40,14 @@ func (s *APIServer) handleGetAccountsByID(w http.ResponseWriter, r *http.Request
 	idSrt := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idSrt)
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	account, err := s.store.GetAccountByID(id)
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
-	WriteJSON(w, http.StatusOK, account)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(account)
 }
 
 func (s *APIServer) handleDeleteAccountsByID(w http.ResponseWriter, r *http.Request) {
@@ -53,29 +55,30 @@ func (s *APIServer) handleDeleteAccountsByID(w http.ResponseWriter, r *http.Requ
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	err = s.store.DeleteAccountByID(id)
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
-	WriteJSON(w, http.StatusOK, nil)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) {
 
 	createAccountRequest := new(CreateAccountRequest)
 	if err := json.NewDecoder(r.Body).Decode(createAccountRequest); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	defer r.Body.Close()
 
 	account := NewAccount(createAccountRequest.FirstName, createAccountRequest.LastName)
 	if err := s.store.CreateAccount(account); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	WriteJSON(w, http.StatusOK, account)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(account)
 }
 
 func (s *APIServer) handleTransfer(w http.ResponseWriter, r *http.Request) {
@@ -83,18 +86,12 @@ func (s *APIServer) handleTransfer(w http.ResponseWriter, r *http.Request) {
 	transferRequest := new(TransferRequest)
 
 	if err := json.NewDecoder(r.Body).Decode(transferRequest); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	defer r.Body.Close()
 
-	WriteJSON(w, http.StatusOK, transferRequest)
-}
-
-func WriteJSON(w http.ResponseWriter, status int, v any) error {
-
-	w.WriteHeader(status)
-
-	return json.NewEncoder(w).Encode(v)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(transferRequest)
 }
 
 type APIServer struct {

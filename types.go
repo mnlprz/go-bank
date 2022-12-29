@@ -2,6 +2,8 @@ package main
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type TransferRequest struct {
@@ -15,7 +17,7 @@ type CreateAccountRequest struct {
 }
 
 type Account struct {
-	ID        int       `json:"id"`
+	gorm.Model
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	Number    int64     `json:"number"`

@@ -110,7 +110,7 @@ func (s *PostgresStore) GetAccountByID(id int) (*Account, error) {
 	account := new(Account)
 
 	err := s.db.QueryRow(q, id).Scan(
-		&account.ID,
+		&account.Id,
 		&account.FirstName,
 		&account.LastName,
 		&account.Number,
@@ -139,7 +139,7 @@ func (s *PostgresStore) GetAccounts() ([]*Account, error) {
 	for rows.Next() {
 		account := new(Account)
 		err := rows.Scan(
-			&account.ID,
+			&account.Id,
 			&account.FirstName,
 			&account.LastName,
 			&account.Number,
